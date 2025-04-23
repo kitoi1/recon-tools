@@ -1,78 +1,60 @@
-#!/bin/bash
-# Enhanced Recon Tools Auto-Installer v2.0
-# This script installs essential recon tools and ensures a clean and efficient installation process.
+# Recon Tools Auto-Installer
 
-# Set up the tools directory
-TOOLS_DIR=~/tools
-mkdir -p $TOOLS_DIR && cd $TOOLS_DIR
+This script automates the installation of essential reconnaissance tools for security assessments. It ensures a seamless setup of various tools used in subdomain enumeration, vulnerability scanning, HTTP probing, and more.
 
-# Check for Go installation
-if ! command -v go &> /dev/null; then
-    echo "[!] Go is not installed on your system."
-    echo "[!] Please install Go first from https://golang.org/dl/ and ensure it is in your PATH."
-    exit 1
-fi
+## Features
+- **Automated Installation**: Installs all the necessary recon tools with minimal user intervention.
+- **Tool Validation**: Checks if Go is installed and ensures `~/go/bin` is in your system's PATH.
+- **Efficient Management**: Skips installation for already-installed tools to save time.
+- **Clean Installation**: Downloads and sets up tools from their official repositories, and removes temporary files after installation.
 
-# Add ~/go/bin to PATH if not already included
-if ! echo "$PATH" | grep -q "$HOME/go/bin"; then
-    echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.bashrc
-    echo "[+] Added ~/go/bin to PATH. Please run 'source ~/.bashrc' or open a new terminal session."
-fi
+## Tools Installed
+1. **[Subfinder](https://github.com/projectdiscovery/subfinder)** - Subdomain enumeration.
+2. **[Assetfinder](https://github.com/tomnomnom/assetfinder)** - Discover related domains and subdomains.
+3. **[gau](https://github.com/lc/gau)** - Fetch URLs from the Wayback Machine and other sources.
+4. **[Httpx](https://github.com/projectdiscovery/httpx)** - Probing HTTP services.
+5. **[Dnsx](https://github.com/projectdiscovery/dnsx)** - DNS resolution and enumeration.
+6. **[Nuclei](https://github.com/projectdiscovery/nuclei)** - Vulnerability scanning.
+7. **[Amass](https://github.com/owasp-amass/amass)** - In-depth subdomain enumeration.
+8. **[Findomain](https://github.com/findomain/findomain)** - Fast subdomain enumeration.
+9. **[Aquatone](https://github.com/michenriksen/aquatone)** - Visual reconnaissance via screenshots.
 
-echo "[+] Installing recon tools..."
+## Prerequisites
+- **Go**: Ensure Go is installed. Download it from [https://golang.org/dl/](https://golang.org/dl/).
+- **Dependencies**: The script uses `wget`, `unzip`, and `sudo`. Make sure these are installed on your system.
 
-# Function to check if a tool is already installed
-install_go_tool() {
-    TOOL=$1
-    if ! command -v $(basename $TOOL) &> /dev/null; then
-        echo "[+] Installing $(basename $TOOL)..."
-        go install $TOOL@latest
-    else
-        echo "[✓] $(basename $TOOL) is already installed. Skipping."
-    fi
-}
+## Usage
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/kitoi1/recon-tools.git
+   cd recon-tools
+   ```
 
-# Install Go-based tools
-install_go_tool github.com/projectdiscovery/subfinder/v2/cmd/subfinder
-install_go_tool github.com/tomnomnom/assetfinder
-install_go_tool github.com/lc/gau/v2/cmd/gau
-install_go_tool github.com/projectdiscovery/httpx/cmd/httpx
-install_go_tool github.com/projectdiscovery/dnsx/cmd/dnsx
-install_go_tool github.com/projectdiscovery/nuclei/v2/cmd/nuclei
+2. Make the script executable:
+   ```bash
+   chmod +x install_recon_tools.sh
+   ```
 
-# Install Amass
-if ! command -v amass &> /dev/null; then
-    echo "[+] Installing Amass..."
-    wget -q https://github.com/owasp-amass/amass/releases/latest/download/amass_linux_amd64.zip
-    unzip -q amass_linux_amd64.zip && sudo mv amass_linux_amd64/amass /usr/local/bin/
-    rm -rf amass_linux_amd64*
-else
-    echo "[✓] Amass is already installed. Skipping."
-fi
+3. Run the script:
+   ```bash
+   ./install_recon_tools.sh
+   ```
 
-# Install Findomain
-if ! command -v findomain &> /dev/null; then
-    echo "[+] Installing Findomain..."
-    wget -q https://github.com/findomain/findomain/releases/latest/download/findomain-linux -O findomain
-    chmod +x findomain && sudo mv findomain /usr/local/bin/
-else
-    echo "[✓] Findomain is already installed. Skipping."
-fi
+4. If `~/go/bin` was added to your PATH, reload your shell configuration:
+   ```bash
+   source ~/.bashrc
+   ```
 
-# Install Aquatone
-if ! command -v aquatone &> /dev/null; then
-    echo "[+] Installing Aquatone..."
-    wget -q https://github.com/michenriksen/aquatone/releases/latest/download/aquatone_linux_amd64_1.7.0.zip
-    unzip -q aquatone_linux_amd64_1.7.0.zip && chmod +x aquatone && sudo mv aquatone /usr/local/bin/
-    rm -f aquatone_linux_amd64_1.7.0.zip
-else
-    echo "[✓] Aquatone is already installed. Skipping."
-fi
+## Output
+Once the script completes, all tools will be installed and ready for use. Ensure that `~/go/bin` is in your PATH for Go-based tools to function correctly.
 
-# Cleanup unused files
-echo "[+] Cleaning up temporary files..."
-rm -f *.zip
+## Notes
+- The script is designed to keep your system clean by removing temporary files after installation.
+- If a tool is already installed, it will be skipped during execution.
 
-# Completion message
-echo "[✓] All tools successfully installed!"
-echo "✅ Ensure that ~/go/bin is in your PATH for Go-based tools to work properly."
+## Contribution
+Feel free to contribute to this repository by submitting issues or pull requests to enhance functionality or add support for additional tools.
+
+---
+
+Happy Reconnaissance!
