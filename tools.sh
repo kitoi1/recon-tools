@@ -1,35 +1,57 @@
 #!/bin/bash
-# Recon Tools Auto-Installer
+# Cloud Hacking Tools Auto-Installer
 
+# Create tools directory
 mkdir -p ~/tools && cd ~/tools
 
-# Install Go if missing
+# Install Go if missing (required for many cloud tools)
 if ! command -v go &> /dev/null; then
-    echo "[!] Go not found. Please install Go first from https://golang.org/dl/"
-    exit 1
+    echo "[+] Installing Go..."
+    wget https://go.dev/dl/go1.21.linux-amd64.tar.gz
+    sudo tar -C /usr/local -xzf go1.21.linux-amd64.tar.gz
+    export PATH=$PATH:/usr/local/go/bin
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
 fi
 
-echo "[+] Installing recon tools..."
+# Update PATH for Go binaries
+export PATH=$PATH:$(go env GOPATH)/bin
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
 
+echo "[+] Installing cloud hacking tools..."
+
+# Cloud-specific recon tools
 go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-go install github.com/tomnomnom/assetfinder@latest
-go install github.com/lc/gau/v2/cmd/gau@latest
+go install github.com/projectdiscovery/cloudlist/cmd/cloudlist@latest
+go install github.com/aws/aws-sdk-go/aws@latest  # AWS SDK for custom tooling
+
+# Cloud bruteforce/enumeration
+go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest
-go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+
+# Cloud bucket tools
+go install github.com/tomnomnom/anew@latest
+go install github.com/sa7mon/s3scanner@latest
+
+# Cloud metadata and SSRF tools
+go install github.com/ethicalhackingplayground/cloudflair@latest
+go install github.com/initstring/cloud_enum@latest
+
+# Infrastructure analysis
 go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+go install github.com/projectdiscovery/katana/cmd/katana@latest
 
-# Amass (install from GitHub binary)
-wget https://github.com/owasp-amass/amass/releases/latest/download/amass_linux_amd64.zip
-unzip amass_linux_amd64.zip && sudo mv amass_linux_amd64/amass /usr/local/bin/
+# Install specific cloud tools from GitHub
+echo "[+] Installing non-Go cloud tools..."
 
-# Findomain
-wget https://github.com/findomain/findomain/releases/latest/download/findomain-linux -O findomain
-chmod +x findomain && sudo mv findomain /usr/local/bin/
+# CloudBrute (multi-cloud enumeration)
+wget https://github.com/0xsha/CloudBrute/releases/latest/download/CloudBrute_linux_amd64.tar.gz
+tar -xzf CloudBrute_linux_amd64.tar.gz && chmod +x CloudBrute && sudo mv CloudBrute /usr/local/bin/
 
-# Aquatone
-wget https://github.com/michenriksen/aquatone/releases/latest/download/aquatone_linux_amd64_1.7.0.zip
-unzip aquatone_linux_amd64_1.7.0.zip && chmod +x aquatone && sudo mv aquatone /usr/local/bin/
+# Pacu (AWS exploitation framework)
+git clone https://github.com/RhinoSecurityLabs/pacu.git
+cd pacu && bash install.sh && cd ..
 
 # Done
-echo "[✓] All tools installed!"
-echo "✅ Be sure ~/go/bin is in your PATH"
+echo "[✓] Cloud hacking tools installed!"
+echo "✅ Tools installed to ~/go/bin and /usr/local/bin"
+echo "⚠️  Remember to configure your cloud credentials before use!"
