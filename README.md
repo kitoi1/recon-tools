@@ -5,8 +5,8 @@
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/yourusername/cloud-hacking-tools.git
-cd cloud-hacking-tools
+git clone https://github.com/kitoi1/reco-tools.git
+cd recon-tools
 chmod +x tools.sh
 ./tools.sh
 ```
